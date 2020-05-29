@@ -78,8 +78,8 @@ function setColors() {
     newTime();
 }
 
-function setTheme(a) {
-    switch (a) {
+function setTheme(theme) {
+    switch (theme) {
     case 'Blue Slate':
         resetColors();
         break;
@@ -99,95 +99,95 @@ function updateTime() {
     setInterval(newTime, 1000);
 }
 
-function newRandom(a) {
-    if (lastCheck != a.getMinutes() && (a.getMinutes() % 3 == 0)) {
+function newRandom(date) {
+    if (lastCheck != date.getMinutes() && (date.getMinutes() % 3 == 0)) {
         random = Math.floor(Math.random() + 2);
         randomPost = Math.floor(Math.random() * 10);
-        lastCheck = a.getMinutes();
+        lastCheck = date.getMinutes();
     }
 }
 
-function encodeUrl(d, e, f, g, h, i, j, k) {
-    let a = window.location.href;
-    let b = '';
-    a.indexOf('/?') != -1 && (b = a.split('?')[1]);
-    let c = btoa(d.replace('#', '')) + 'a246' + btoa(e.replace('#', '')) + 'b246' + btoa(f.replace('#', '')) + 'c246' + btoa(g.replace('#', '')) + 'd246' + btoa(h.toString()) + 'e246' + btoa(i.toString()) + 'f246' + btoa(j.toString()) + 'g246' + btoa(k.toString());
+function encodeUrl(bg, mainText, border, glow, clockFont, todFont, todChecked, dateChecked) {
+    let locHref = window.location.href;
+    let encodedText = '';
+    locHref.indexOf('/?') != -1 && (encodedText = locHref.split('?')[1]);
+    let encodedString = btoa(bg.replace('#', '')) + 'a246' + btoa(mainText.replace('#', '')) + 'b246' + btoa(border.replace('#', '')) + 'c246' + btoa(glow.replace('#', '')) + 'd246' + btoa(clockFont.toString()) + 'e246' + btoa(todFont.toString()) + 'f246' + btoa(todChecked.toString()) + 'g246' + btoa(dateChecked.toString());
     if (!window.location.protocol.includes("file:")) {
-        b.includes(c) || window.history.pushState({
+        encodedText.includes(encodedString) || window.history.pushState({
             where: 'simpleti.me'
-        }, 'simpleti.me', '/?' + c);
+        }, 'simpleti.me', '/?' + encodedString);
     }
 }
 
 function decodeUrl() {
-    let f = window.location.href;
-    if (f.indexOf('/?') != -1) {
-        let a = f.split('?')[1];
-        let b = a.split('a246')[0];
-        let c = a.split('a246')[1].split('b246')[0];
-        let d = a.split('b246')[1].split('c246')[0];
-        let e = a.split('c246')[1].split('d246')[0];
-        let g = a.split('d246')[1].split('e246')[0];
-        let h = a.split('e246')[1].split('f246')[0];
-        let i = a.split('f246')[1].split('g246')[0];
-        let j = a.split('g246')[1];
-        b = '#' + atob(b);
-        c = '#' + atob(c);
-        d = '#' + atob(d);
-        e = '#' + atob(e);
-        g = atob(g);
-        h = atob(h);
-        i = atob(i);
-        j = atob(j);
-        bgColor = b;
-        textMainColor = c;
-        textBorderColor = d;
-        textGlowColor = e;
-        clockFontSize = g;
-        todFontSize = h;      
-        $("#color-clockFontSize").val(g);
-        $("#color-todFontSize").val(h);
-        $('#color-showTimeOfDay').prop("checked", i === "true");
-        $('#color-showDate').prop("checked", j === "true");
+    let locHref = window.location.href;
+    if (locHref.indexOf('/?') != -1) {
+        let encString = locHref.split('?')[1];
+        let bg = encString.split('a246')[0];
+        let mainText = encString.split('a246')[1].split('b246')[0];
+        let border = encString.split('b246')[1].split('c246')[0];
+        let glow = encString.split('c246')[1].split('d246')[0];
+        let clockFont = encString.split('d246')[1].split('e246')[0];
+        let todFont = encString.split('e246')[1].split('f246')[0];
+        let todHidden = encString.split('f246')[1].split('g246')[0];
+        let dateHidden = encString.split('g246')[1];
+        bg = '#' + atob(bg);
+        mainText = '#' + atob(mainText);
+        border = '#' + atob(border);
+        glow = '#' + atob(glow);
+        clockFont = atob(clockFont);
+        todFont = atob(todFont);
+        todHidden = atob(todHidden);
+        dateHidden = atob(dateHidden);
+        bgColor = bg;
+        textMainColor = mainText;
+        textBorderColor = border;
+        textGlowColor = glow;
+        clockFontSize = clockFont;
+        todFontSize = todFont;      
+        $("#color-clockFontSize").val(clockFont);
+        $("#color-todFontSize").val(todFont);
+        $('#color-showTimeOfDay').prop("checked", todHidden === "true");
+        $('#color-showDate').prop("checked", dateHidden === "true");
         setColors();
     }
 }
 
 function newTime() {
-    var b = new Date();
-    newRandom(b);
+    let date = new Date();
+    newRandom(date);
     encodeUrl(bgColor, textMainColor, textBorderColor, textGlowColor, clockFontSize, todFontSize, $('#color-showTimeOfDay').is(":checked"), $('#color-showDate').is(":checked"));
-    var v = 'ish';
-    var w = ['twelve', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven'];
-    let x = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
-    var d = ['almost ', 'approaching ', 'nearly '];
-    var e = ['til', 'past'];
-    var c = randomPost > 4 ? ' or so' : v;
-    var a = b.getMinutes();
-    var f = b.getMinutes() > 30 ? 0 : 1;
-    var g = w[b.getHours() % 12];
-    var h = w[(b.getHours() + 1) % 12];
-    var j = 'five ' + e[f] + ' ' + g;
-    var k = 'ten ' + e[f] + ' ' + g;
-    var l = 'a quarter ' + e[f] + ' ' + g;
-    var m = 'twenty ' + e[f] + ' ' + g;
-    var n = 'twenty-five ' + e[f] + ' ' + g;
-    var o = 'half past ' + g;
-    var p = 'thirty-five after ' + g;
-    var q = 'twenty ' + e[f] + ' ' + h;
-    var r = 'a quarter ' + e[f] + ' ' + h;
-    var s = 'ten ' + e[f] + ' ' + h;
-    var t = 'five ' + e[f] + ' ' + h;
-    let u = a >= 38;
-    var y = function() {
-        return a == 0 ? g : a == 5 ? j : a == 10 ? k : a == 15 ? l : a == 20 ? m : a == 25 ? n : a == 30 ? o : a == 35 ? p : a == 40 ? q : a == 45 ? r : a == 50 ? s : a == 55 ? t : a < 2 ? g.replace('ive', 'iv').replace('ine', 'in') + v : a < 5 ? d[random] + j + c : a < 8 ? (j + c).replace('fiveish', 'fivish') : a < 10 ? d[random] + k : a < 13 ? k + c : a < 15 ? d[random] + l : a < 18 ? l + c : a < 20 ? d[random] + m : a < 23 ? m + c : a < 25 ? d[random] + n : a < 28 ? n + c : a < 30 ? d[random] + o : a < 33 ? o + c : a < 35 ? d[random] + p : a < 38 ? (p + c).replace('fiveish', 'fivish') : a < 40 ? d[random] + q : a < 43 ? q + c : a < 45 ? d[random] + r : a < 48 ? r + c : a < 50 ? d[random] + s : a < 13 ? s + c : a < 55 ? d[random] + t : a < 13 ? (t + c).replace('fiveish', 'fivish') : a < 60 ? d[random] + h + c : void 0;
+    let ish = 'ish';
+    let times = ['twelve', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven'];
+    let months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+    let pres = ['almost ', 'approaching ', 'nearly '];
+    let mids = ['til', 'past'];
+    let ends = randomPost > 4 ? ' or so' : ish;
+    let curMins = date.getMinutes();
+    let pastThirty = date.getMinutes() > 30 ? 0 : 1;
+    let hourAsString = times[date.getHours() % 12];
+    let nextHourAsString = times[(date.getHours() + 1) % 12];
+    let five = 'five ' + mids[pastThirty] + ' ' + hourAsString;
+    let ten = 'ten ' + mids[pastThirty] + ' ' + hourAsString;
+    let fifteen = 'a quarter ' + mids[pastThirty] + ' ' + hourAsString;
+    let twenty = 'twenty ' + mids[pastThirty] + ' ' + hourAsString;
+    let twentyfive = 'twenty-five ' + mids[pastThirty] + ' ' + hourAsString;
+    let thirty = 'half past ' + hourAsString;
+    let thirtyfive = 'thirty-five after ' + hourAsString;
+    let fourty = 'twenty ' + mids[pastThirty] + ' ' + nextHourAsString;
+    let fourtyfive = 'a quarter ' + mids[pastThirty] + ' ' + nextHourAsString;
+    let fifty = 'ten ' + mids[pastThirty] + ' ' + nextHourAsString;
+    let fiftyfive = 'five ' + mids[pastThirty] + ' ' + nextHourAsString;
+    let shouldDisplayNextHour = curMins >= 38;
+    let timeAsString = function() {
+        return curMins == 0 ? hourAsString : curMins == 5 ? five : curMins == 10 ? ten : curMins == 15 ? fifteen : curMins == 20 ? twenty : curMins == 25 ? twentyfive : curMins == 30 ? thirty : curMins == 35 ? thirtyfive : curMins == 40 ? fourty : curMins == 45 ? fourtyfive : curMins == 50 ? fifty : curMins == 55 ? fiftyfive : curMins < 2 ? hourAsString.replace('ive', 'iv').replace('ine', 'in') + ish : curMins < 5 ? pres[random] + five + ends : curMins < 8 ? (five + ends).replace('fiveish', 'fivish') : curMins < 10 ? pres[random] + ten : curMins < 13 ? ten + ends : curMins < 15 ? pres[random] + fifteen : curMins < 18 ? fifteen + ends : curMins < 20 ? pres[random] + twenty : curMins < 23 ? twenty + ends : curMins < 25 ? pres[random] + twentyfive : curMins < 28 ? twentyfive + ends : curMins < 30 ? pres[random] + thirty : curMins < 33 ? thirty + ends : curMins < 35 ? pres[random] + thirtyfive : curMins < 38 ? (thirtyfive + ends).replace('fiveish', 'fivish') : curMins < 40 ? pres[random] + fourty : curMins < 43 ? fourty + ends : curMins < 45 ? pres[random] + fourtyfive : curMins < 48 ? fourtyfive + ends : curMins < 50 ? pres[random] + fifty : curMins < 13 ? fifty + ends : curMins < 55 ? pres[random] + fiftyfive : curMins < 13 ? (fiftyfive + ends).replace('fiveish', 'fivish') : curMins < 60 ? pres[random] + nextHourAsString + ends : void 0;
     };
-    var i = '';
-    b.getHours() <= 11 || b.getHours() == 23 && u ? i = ' in the morning.' : b.getHours() == 16 && u ? i = ' at night.' : b.getHours() > 11 && b.getHours() < 17 || b.getHours() == 11 && u ? i = ' in the afternoon.' : i = ' at night.';
-    let z = function(a) {
-        if (a > 3 && a < 21)
+    let timeOfDay = '';
+    date.getHours() <= 11 || date.getHours() == 23 && shouldDisplayNextHour ? timeOfDay = ' in the morning.' : date.getHours() == 16 && shouldDisplayNextHour ? timeOfDay = ' at night.' : date.getHours() > 11 && date.getHours() < 17 || date.getHours() == 11 && shouldDisplayNextHour ? timeOfDay = ' in the afternoon.' : timeOfDay = ' at night.';
+    let ord = function(number) {
+        if (number > 3 && number < 21)
             return 'th';
-        switch (a % 10) {
+        switch (number % 10) {
         case 1:
             return 'st';
         case 2:
@@ -198,10 +198,10 @@ function newTime() {
             return 'th';
         }
     };
-    let A = 'on the ' + b.getDate() + z(b.getDate) + ' of ' + x[b.getMonth()] + ', ' + b.getFullYear();
-    $('#time').html(y());
-    $('#date').html(A);
-    $('#nightOrDay').html(i);
+    let dateStr = 'on the ' + date.getDate() + ord(date.getDate) + ' of ' + months[date.getMonth()] + ', ' + date.getFullYear();
+    $('#time').html(timeAsString());
+    $('#date').html(dateStr);
+    $('#nightOrDay').html(timeOfDay);
     $('#time').attr({
         style: 'color:' + textMainColor + ';font-size:' + clockFontSize + 'em;text-shadow: 0 0 2px ' + textBorderColor + ', 0 0 4px ' + textBorderColor + ',' + '0 0 6px ' + textBorderColor + ', 0 0 8px ' + textGlowColor + ',' + '0 0 10px ' + textGlowColor + ', 0 0 12px ' + textGlowColor + ',' + '0 0 14px ' + textGlowColor + ', 0 0 16px ' + textGlowColor + ';'
     });
@@ -237,9 +237,9 @@ $(function() {
     $('#colorLink').click(function() {
         showColorChooser();
     }),
-    $('body').click(function(a) {
-        let t = a.target.parentNode.id == null ? "" : a.target.parentNode.id;
-        $('#color-Chooser').is(':visible') ? ((!a.target.id.includes('color-') && !t.includes("color-")) || a.target.id == 'closeBox') && hideColorChooser() : showColorChooser();
+    $('body').click(function(e) {
+        let t = e.target.parentNode.id == null ? "" : e.target.parentNode.id;
+        $('#color-Chooser').is(':visible') ? ((!e.target.id.includes('color-') && !t.includes("color-")) || e.target.id == 'closeBox') && hideColorChooser() : showColorChooser();
     });
     $('#color-themeSelect').on('change', function() {
         setTheme($(this).val());
@@ -269,17 +269,17 @@ $(function() {
         showButtons: false,
         showInitial: true,
         showInput: !0,
-        change: function(a) {
-            bgColor = a.toHexString();
+        change: function(color) {
+            bgColor = color.toHexString();
             setColors();
             $("#color-Chooser").show();
         },
-        beforeShow: function(a) {
-            bgColor = a.toHexString(),
+        beforeShow: function(color) {
+            bgColor = color.toHexString(),
             setColors();
         },
-        move: function(a) {
-            bgColor = a.toHexString(),
+        move: function(color) {
+            bgColor = color.toHexString(),
             setColors();
             $("#color-Chooser").hide();
         }
@@ -293,17 +293,17 @@ $(function() {
         showButtons: false,
         showInitial: true,
         allowEmpty: true,
-        change: function(a) {
-            textBorderColor = (a == null || a._a == 0) ? "transparent" : a.toHexString(),
+        change: function(color) {
+            textBorderColor = (color == null || color._a == 0) ? "transparent" : color.toHexString(),
             setColors();
             $("#color-Chooser").show();
         },
-        beforeShow: function(a) {
-            textBorderColor = (a == null || a._a == 0) ? "transparent" : a.toHexString(),
+        beforeShow: function(color) {
+            textBorderColor = (color == null || color._a == 0) ? "transparent" : color.toHexString(),
             setColors();
         },
-        move: function(a) {
-            textBorderColor = (a == null || a._a == 0) ? "transparent" : a.toHexString(),
+        move: function(color) {
+            textBorderColor = (color == null || color._a == 0) ? "transparent" : color.toHexString(),
             setColors();
             $("#color-Chooser").hide();
         }
@@ -317,17 +317,17 @@ $(function() {
         showButtons: false,
         showInitial: true,
         allowEmpty: true,
-        change: function(a) {             
-            textGlowColor = (a == null || a._a == 0) ? "transparent" : a.toHexString(),
+        change: function(color) {             
+            textGlowColor = (color == null || color._a == 0) ? "transparent" : color.toHexString(),
             setColors();
             $("#color-Chooser").show();
         },
-        beforeShow: function(a) {
-            textGlowColor = (a == null || a._a == 0) ? "transparent" : a.toHexString(),
+        beforeShow: function(color) {
+            textGlowColor = (color == null || color._a == 0) ? "transparent" : color.toHexString(),
             setColors();
         },
-        move: function(a) {
-            textGlowColor = (a == null || a._a == 0) ? "transparent" : a.toHexString(),
+        move: function(color) {
+            textGlowColor = (color == null || color._a == 0) ? "transparent" : color.toHexString(),
             setColors();
             $("#color-Chooser").hide();
         }
@@ -339,17 +339,17 @@ $(function() {
         containerClassName: "colorPickerBG",  
         showInitial: true,
         showInput: !0,
-        change: function(a) {
-            textMainColor = a.toHexString(),
+        change: function(color) {
+            textMainColor = color.toHexString(),
             setColors();
             $("#color-Chooser").show();
         },
-        beforeShow: function(a) {
-            textMainColor = a.toHexString(),
+        beforeShow: function(color) {
+            textMainColor = color.toHexString(),
             setColors();
         },
-        move: function(a) {
-            textMainColor = a.toHexString(),
+        move: function(color) {
+            textMainColor = color.toHexString(),
             setColors();
             $("#color-Chooser").hide();
         }
