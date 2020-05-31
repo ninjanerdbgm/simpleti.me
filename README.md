@@ -1,7 +1,8 @@
 ## simpleti.me
 A simple, colloquial clock.
 
-If you'd like to help me translate this clock, please email me: matt at simpleti dot me.
+### If you'd like to help me translate this clock, please email me: matt at simpleti dot me.
+1. I'm looking for people to translate to new languages OR suggest changes to existing ones.
 
 If you'd like to buy me a coffee, please go to https://paypal.me/simpletimee
 
