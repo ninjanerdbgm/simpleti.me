@@ -71,11 +71,21 @@ function setColors() {
         style: 'font-size: ' + todFontSize + 'em'
     });
     $('#color-textMainColor').spectrum('set', textMainColor);
+    $("#color-Chooser").attr({
+        style: "background-color: " + bgColor + ";color: " + textMainColor + ";border: 2px solid " + textMainColor + ";"
+    });
+    $(".simpletime-select").attr({
+        style: "color: " + textMainColor + ";border: 1px solid " + textMainColor + ";background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'),linear-gradient(to bottom, " + bgColor + " 0%, " + bgColor + " 100%)"
+    });
+    $(".simpletime-select > option").attr({
+        style: "color: " + textMainColor + ";background-color: " + bgColor + ";"
+    });
 
     $("a.email > svg > g").attr({fill: textMainColor});
     $("a.twitter > svg > g").attr({fill: textMainColor});
     $("a.github > svg > g").attr({fill: textMainColor});
-    newTime();
+    newTime();    
+    if (showingColorChooser) showColorChooser();
 }
 
 function setTheme(theme) {
@@ -92,7 +102,7 @@ function setTheme(theme) {
     case 'Hidden Forest':
         setHiddenForest();
         break;
-    }
+    }    
 }
 
 function updateTime() {
@@ -110,12 +120,15 @@ function newRandom(date) {
 function encodeUrl(bg, mainText, border, glow, clockFont, todFont, todChecked, dateChecked) {
     let locHref = window.location.href;
     let encodedText = '';
-    locHref.indexOf('/?') != -1 && (encodedText = locHref.split('?')[1]);
+    if (locHref.indexOf('/?') != -1) {
+        encodedText = locHref.split('?')[1];
+        locHref = locHref.split('/?')[0];
+    }
     let encodedString = btoa(bg.replace('#', '')) + 'a246' + btoa(mainText.replace('#', '')) + 'b246' + btoa(border.replace('#', '')) + 'c246' + btoa(glow.replace('#', '')) + 'd246' + btoa(clockFont.toString()) + 'e246' + btoa(todFont.toString()) + 'f246' + btoa(todChecked.toString()) + 'g246' + btoa(dateChecked.toString());
     if (!window.location.protocol.includes("file:")) {
         encodedText.includes(encodedString) || window.history.pushState({
             where: 'simpleti.me'
-        }, 'simpleti.me', '/?' + encodedString);
+        }, 'simpleti.me', locHref + (locHref[locHref.length - 1] === '/' ? '?' : '/?') + encodedString);
     }
 }
 
@@ -157,48 +170,48 @@ function newTime() {
     let date = new Date();
     newRandom(date);
     encodeUrl(bgColor, textMainColor, textBorderColor, textGlowColor, clockFontSize, todFontSize, $('#color-showTimeOfDay').is(":checked"), $('#color-showDate').is(":checked"));
-    let ish = 'ish';
-    let times = ['twelve', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven'];
-    let months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
-    let pres = ['almost ', 'approaching ', 'nearly '];
-    let mids = ['til', 'past'];
-    let ends = randomPost > 4 ? ' or so' : ish;
+    let ish = localize.gettext('ish');
+    let times = [localize.gettext('twelve'), localize.gettext('one'), localize.gettext('two'), localize.gettext('three'), localize.gettext('four'), localize.gettext('five'), localize.gettext('six'), localize.gettext('seven'), localize.gettext('eight'), localize.gettext('nine'), localize.gettext('ten'), localize.gettext('eleven')];
+    let months = [localize.gettext('jan'), localize.gettext('feb'), localize.gettext('mar'), localize.gettext('apr'), localize.gettext('may'), localize.gettext('jun'), localize.gettext('jul'), localize.gettext('aug'), localize.gettext('sep'), localize.gettext('oct'), localize.gettext('nov'), localize.gettext('dec')];
+    let pres = [localize.gettext('almost '), localize.gettext('approaching '), localize.gettext('nearly ')];
+    let mids = [localize.gettext('til'), localize.gettext('past')];
+    let ends = randomPost > 4 ? localize.gettext(' or so') : ish;
     let curMins = date.getMinutes();
     let pastThirty = date.getMinutes() > 30 ? 0 : 1;
     let hourAsString = times[date.getHours() % 12];
     let nextHourAsString = times[(date.getHours() + 1) % 12];
-    let five = 'five ' + mids[pastThirty] + ' ' + hourAsString;
-    let ten = 'ten ' + mids[pastThirty] + ' ' + hourAsString;
-    let fifteen = 'a quarter ' + mids[pastThirty] + ' ' + hourAsString;
-    let twenty = 'twenty ' + mids[pastThirty] + ' ' + hourAsString;
-    let twentyfive = 'twenty-five ' + mids[pastThirty] + ' ' + hourAsString;
-    let thirty = 'half past ' + hourAsString;
-    let thirtyfive = 'thirty-five after ' + hourAsString;
-    let fourty = 'twenty ' + mids[pastThirty] + ' ' + nextHourAsString;
-    let fourtyfive = 'a quarter ' + mids[pastThirty] + ' ' + nextHourAsString;
-    let fifty = 'ten ' + mids[pastThirty] + ' ' + nextHourAsString;
-    let fiftyfive = 'five ' + mids[pastThirty] + ' ' + nextHourAsString;
+    let five = localize.gettext('five %1 %2',mids[pastThirty],hourAsString);
+    let ten = localize.gettext('ten %1 %2',mids[pastThirty],hourAsString);
+    let fifteen = localize.gettext('a quarter %1 %2',mids[pastThirty],hourAsString);
+    let twenty = localize.gettext('twenty %1 %2',mids[pastThirty],hourAsString);
+    let twentyfive = localize.gettext('twenty-five %1 %2',mids[pastThirty],hourAsString);
+    let thirty = localize.gettext('half past %1',hourAsString,nextHourAsString);
+    let thirtyfive = localize.gettext('thirty-five after %1',hourAsString);
+    let fourty = localize.gettext('twenty %1 %2',mids[pastThirty],nextHourAsString);
+    let fourtyfive = localize.gettext('a quarter %1 %2',mids[pastThirty],nextHourAsString);
+    let fifty = localize.gettext('ten %1 %2',mids[pastThirty],nextHourAsString);
+    let fiftyfive = localize.gettext('five %1 %2',mids[pastThirty],nextHourAsString);
     let shouldDisplayNextHour = curMins >= 38;
     let timeAsString = function() {
         return curMins == 0 ? hourAsString : curMins == 5 ? five : curMins == 10 ? ten : curMins == 15 ? fifteen : curMins == 20 ? twenty : curMins == 25 ? twentyfive : curMins == 30 ? thirty : curMins == 35 ? thirtyfive : curMins == 40 ? fourty : curMins == 45 ? fourtyfive : curMins == 50 ? fifty : curMins == 55 ? fiftyfive : curMins < 2 ? hourAsString.replace('ive', 'iv').replace('ine', 'in') + ish : curMins < 5 ? pres[random] + five + ends : curMins < 8 ? (five + ends).replace('fiveish', 'fivish') : curMins < 10 ? pres[random] + ten : curMins < 13 ? ten + ends : curMins < 15 ? pres[random] + fifteen : curMins < 18 ? fifteen + ends : curMins < 20 ? pres[random] + twenty : curMins < 23 ? twenty + ends : curMins < 25 ? pres[random] + twentyfive : curMins < 28 ? twentyfive + ends : curMins < 30 ? pres[random] + thirty : curMins < 33 ? thirty + ends : curMins < 35 ? pres[random] + thirtyfive : curMins < 38 ? (thirtyfive + ends).replace('fiveish', 'fivish') : curMins < 40 ? pres[random] + fourty : curMins < 43 ? fourty + ends : curMins < 45 ? pres[random] + fourtyfive : curMins < 48 ? fourtyfive + ends : curMins < 50 ? pres[random] + fifty : curMins < 13 ? fifty + ends : curMins < 55 ? pres[random] + fiftyfive : curMins < 13 ? (fiftyfive + ends).replace('fiveish', 'fivish') : curMins < 60 ? pres[random] + nextHourAsString + ends : void 0;
     };
     let timeOfDay = '';
-    date.getHours() <= 11 || date.getHours() == 23 && shouldDisplayNextHour ? timeOfDay = ' in the morning.' : date.getHours() == 16 && shouldDisplayNextHour ? timeOfDay = ' at night.' : date.getHours() > 11 && date.getHours() < 17 || date.getHours() == 11 && shouldDisplayNextHour ? timeOfDay = ' in the afternoon.' : timeOfDay = ' at night.';
+    date.getHours() <= 11 || date.getHours() == 23 && shouldDisplayNextHour ? timeOfDay = localize.gettext(' in the morning.') : date.getHours() == 16 && shouldDisplayNextHour ? timeOfDay = localize.gettext(' at night.') : date.getHours() > 11 && date.getHours() < 17 || date.getHours() == 11 && shouldDisplayNextHour ? timeOfDay = localize.gettext(' in the afternoon.') : timeOfDay = localize.gettext(' at night.');
     let ord = function(number) {
         if (number > 3 && number < 21)
-            return 'th';
+            return localize.gettext('th');
         switch (number % 10) {
         case 1:
-            return 'st';
+            return localize.gettext('st');
         case 2:
-            return 'nd';
+            return localize.gettext('nd');
         case 3:
-            return 'rd';
+            return localize.gettext('rd');
         default:
-            return 'th';
+            return localize.gettext('th');
         }
     };
-    let dateStr = 'on the ' + date.getDate() + ord(date.getDate) + ' of ' + months[date.getMonth()] + ', ' + date.getFullYear();
+    let dateStr = localize.gettext('on the %1%2 of %3, %4',date.getDate(),ord(date.getDate),months[date.getMonth()],date.getFullYear());
     $('#time').html(timeAsString());
     $('#date').html(dateStr);
     $('#nightOrDay').html(timeOfDay);
@@ -232,17 +245,36 @@ var random = 0;
 var randomPost = 0;
 var lastCheck = 0;
 var isMobile = !1;
+var localize = i18n({
+    domain: "messages",
+    locale: "en"
+});    
+var showingColorChooser = false;
+
+fetch("loc/en.json").then(response => response.json()).then(json => { localize.loadJSON(json, 'messages'); }).catch(err => console.error(err));
+
 (/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|ipad|iris|kindle|Android|Silk|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i.test(navigator.userAgent) || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(navigator.userAgent.substr(0, 4))) && (isMobile = !0),
 $(function() {
     $('#colorLink').click(function() {
         showColorChooser();
     }),
     $('body').click(function(e) {
-        let t = e.target.parentNode.id == null ? "" : e.target.parentNode.id;
-        $('#color-Chooser').is(':visible') ? ((!e.target.id.includes('color-') && !t.includes("color-")) || e.target.id == 'closeBox') && hideColorChooser() : showColorChooser();
+        let target = $(e.target);
+        if (!target.closest(".simpletime-select").length) {
+            if (!target.closest("#color-Chooser").length && $("#color-Chooser").is(":visible")) hideColorChooser();
+            else showColorChooser();
+        }
     });
     $('#color-themeSelect').on('change', function() {
-        setTheme($(this).val());
+        showingColorChooser = $("#color-Chooser").is(":visible");
+        setTheme($(this).val());        
+    });
+    $('#color-langSelect').on('change', function() {
+        fetch("loc/" + $(this).val() + ".json").then(response => response.json()).then(json => { 
+            console.log(json);
+            localize.loadJSON(json, 'messages'); 
+            localize.setLocale($(this).val());
+        }).catch(err => console.error(err)); 
     });
     $('#color-clockFontSize').on('change', function() {
         clockFontSize = $(this).val();
@@ -362,6 +394,7 @@ $(function() {
     newTime();
     updateTime();
     hideColorChooser();
+    setColors();
 
     $("a.email > svg > g").attr({fill: textMainColor});
     $("a.twitter > svg > g").attr({fill: textMainColor});
