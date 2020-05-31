@@ -275,7 +275,7 @@ $(function() {
     }),
     $('body').click(function(e) {
         let target = $(e.target);
-        if (!target.closest(".simpletime-select").length) {
+        if (!target.closest(".simpletime-select").length && !target.closest(".topnav").length) {
             if (!target.closest("#color-Chooser").length && $("#color-Chooser").is(":visible")) hideColorChooser();
             else showColorChooser();
         }
