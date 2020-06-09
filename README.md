@@ -8,6 +8,9 @@ If you'd like to buy me a coffee, please go to https://paypal.me/simpletimee
 
 If you've got suggestions for improvements, please let me know!
 
+## Special Thanks:
+   - Special thanks to https://github.com/MasterChenb0x for the Patwa translation!
+
 ## Notes:
 1. This site uses three libraries not included in this source:
    - jQuery 1.11.3 (https://code.jquery.com/jquery/)
